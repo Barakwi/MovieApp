@@ -7,20 +7,23 @@ import com.bumptech.glide.Glide
 import com.example.movieapp.databinding.ItemMovieBinding
 import com.example.movieapp.data.Movie
 
-class MovieAdapter(private val movies: List<Movie>) :
+class MovieAdapter(
+    private val movies: List<Movie>,
+    private val onFavoriteClick: (Movie) -> Unit
+) :
     RecyclerView.Adapter<MovieAdapter.MovieViewHolder>(){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): MovieViewHolder {
-        val binding = ItemMovieBinding
-            .inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return MovieViewHolder(binding)
     }
     override fun onBindViewHolder(
         holder: MovieViewHolder,
         position: Int
     ) {
+
         val currentMovie = movies[position]
         holder.binding.textTitle.text = currentMovie.title
 
@@ -29,7 +32,15 @@ class MovieAdapter(private val movies: List<Movie>) :
             .load(imageUrl)
             .into(holder.binding.imagePoster)
 
+
+        holder.binding.imageFavorite.setOnClickListener {
+            onFavoriteClick(currentMovie)
+        }
+
     }
+
+
+
     override fun getItemCount(): Int {
 
         return movies.size

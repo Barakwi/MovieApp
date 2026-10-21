@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <ImageView
         android:id="@+id/imagePoster"
-
         android:layout_width="126dp"
         android:layout_height="150dp"
         android:contentDescription="@string/movie_poster"
@@ -16,6 +16,15 @@
         app:layout_constraintTop_toTopOf="parent"
         android:scaleType="centerCrop"
         />
+
+    <ImageView
+        android:id="@+id/imageFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_favorite"
+        app:layout_constraintTop_toTopOf="@id/imagePoster"
+        app:layout_constraintEnd_toEndOf="@id/imagePoster"/>
 
     <TextView
         android:id="@+id/textTitle"

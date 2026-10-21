@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
-}
+    id("kotlin-kapt")
+    alias(libs.plugins.kotlin.android)
 
+}
 android {
     namespace = "com.example.movieapp"
     compileSdk {
@@ -29,9 +31,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
+
 }
 
 dependencies {
@@ -61,6 +69,9 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.9.2")
 
+    implementation("com.google.android.material:material:1.14.0")
 
-
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 }

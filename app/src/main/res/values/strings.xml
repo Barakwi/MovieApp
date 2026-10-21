@@ -2,4 +2,8 @@
     <string name="app_name">MovieApp</string>
     <string name="movie_poster">Movie Poster</string>
     <string name="app_title">Baraka Movies</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="recent">Recent</string>
 </resources>

@@ -9,21 +9,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapp.adapter.MovieAdapter
 import com.example.movieapp.databinding.ActivityMainBinding
+import com.example.movieapp.network.MovieDao
+import com.example.movieapp.network.MovieDataBase
 import com.example.movieapp.viewModel.MovieUiState
 import com.example.movieapp.viewModel.MovieViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MovieViewModel by viewModels()
+
+    private lateinit var viewModel: MovieViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val database = MovieDataBase.getDataBase(this)
+        val dao = database.movieDao()
+        val factory = MovieViewModelFactory(dao)
+        viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.recyclerMovies.layoutManager = GridLayoutManager(this, 2)
-        binding.recyclerMovies.adapter = MovieAdapter(emptyList())
+        binding.recyclerMovies.adapter = MovieAdapter(emptyList(), onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
 
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
@@ -51,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                         binding.recyclerMovies.isVisible = true
                         binding.textAppTitle.isVisible = true
 
-                        val adapter = MovieAdapter(state.movie)
+                        val adapter = MovieAdapter(state.movie, onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
 
                         binding.recyclerMovies.adapter = adapter
 
@@ -66,5 +78,14 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+}
+class MovieViewModelFactory(private val movieDao: MovieDao) : ViewModelProvider.Factory {
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return MovieViewModel(movieDao) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
