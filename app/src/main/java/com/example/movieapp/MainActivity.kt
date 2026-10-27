@@ -14,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movieapp.adapter.MovieAdapter
+import com.example.movieapp.adapter.MoviePagingAdapter
 import com.example.movieapp.databinding.ActivityMainBinding
 import com.example.movieapp.network.MovieDao
 import com.example.movieapp.network.MovieDataBase
+import com.example.movieapp.network.RetrofitClient
 import com.example.movieapp.viewModel.MovieUiState
 import com.example.movieapp.viewModel.MovieViewModel
 import kotlinx.coroutines.launch
@@ -35,7 +37,8 @@ class MainActivity : AppCompatActivity() {
         val dao = database.movieDao()
         val factory = MovieViewModelFactory(dao)
         viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
-
+        val pagingAdapter = MoviePagingAdapter(onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
+        binding.recyclerMovies.adapter = pagingAdapter
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -46,11 +49,13 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         binding.recyclerMovies.layoutManager = GridLayoutManager(this, 2)
-        binding.recyclerMovies.adapter = MovieAdapter(emptyList(), onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
 
         lifecycleScope.launch {
+            viewModel.moviesPager.collect { pagingData ->
+                pagingAdapter.submitData(pagingData)
+            }
+
             viewModel.uiState.collect { state ->
                 when (state) {
                     is MovieUiState.Loading -> {
@@ -84,7 +89,7 @@ class MovieViewModelFactory(private val movieDao: MovieDao) : ViewModelProvider.
     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MovieViewModel(movieDao) as T
+            return MovieViewModel(movieDao, RetrofitClient.movieApi) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

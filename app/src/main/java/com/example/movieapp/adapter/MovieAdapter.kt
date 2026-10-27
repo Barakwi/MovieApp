@@ -31,21 +31,14 @@ class MovieAdapter(
         Glide.with(holder.itemView.context)
             .load(imageUrl)
             .into(holder.binding.imagePoster)
-
-
         holder.binding.imageFavorite.setOnClickListener {
             onFavoriteClick(currentMovie)
         }
-
     }
-
-
-
     override fun getItemCount(): Int {
-
         return movies.size
     }
-    inner class MovieViewHolder(val binding: ItemMovieBinding) :
+    class MovieViewHolder(val binding: ItemMovieBinding) :
         RecyclerView.ViewHolder(binding.root){
 
     }

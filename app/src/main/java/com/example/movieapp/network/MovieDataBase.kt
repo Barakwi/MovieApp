@@ -23,7 +23,7 @@ abstract class MovieDataBase : RoomDatabase() {
                 ).build()
 
                 INSTANCE = instance
-                instance
+                return instance
             }
         }
     }
