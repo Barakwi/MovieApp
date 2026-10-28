@@ -21,6 +21,7 @@ import com.example.movieapp.network.MovieDataBase
 import com.example.movieapp.network.RetrofitClient
 import com.example.movieapp.viewModel.MovieUiState
 import com.example.movieapp.viewModel.MovieViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -37,46 +38,45 @@ class MainActivity : AppCompatActivity() {
         val dao = database.movieDao()
         val factory = MovieViewModelFactory(dao)
         viewModel = ViewModelProvider(this, factory)[MovieViewModel::class.java]
-        val pagingAdapter = MoviePagingAdapter(onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
-        binding.recyclerMovies.adapter = pagingAdapter
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.recyclerMovies.layoutManager = GridLayoutManager(this, 2)
 
+        val pagingAdapter = MoviePagingAdapter(onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
+        binding.recyclerMovies.adapter = pagingAdapter
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.recyclerMovies.layoutManager = GridLayoutManager(this, 2)
+
 
         lifecycleScope.launch {
-            viewModel.moviesPager.collect { pagingData ->
-                pagingAdapter.submitData(pagingData)
+            // 1. Feed the data to the PagingAdapter
+            launch {
+                viewModel.moviesPager.collectLatest { pagingData ->
+                    pagingAdapter.submitData(pagingData)
+                }
             }
 
-            viewModel.uiState.collect { state ->
-                when (state) {
-                    is MovieUiState.Loading -> {
-                        binding.progressLoading.isVisible = true
-                        binding.recyclerMovies.isVisible = true
-                        binding.textAppTitle.isVisible = false
-                    }
-                    is MovieUiState.Success -> {
-                        binding.progressLoading.isVisible = false
-                        binding.recyclerMovies.isVisible = true
-                        binding.textAppTitle.isVisible = true
+            // 2. Listen to the PagingAdapter's built-in loading state
+            launch {
+                pagingAdapter.loadStateFlow.collectLatest { loadStates ->
+                    // Check if the initial load is happening
+                    val isLoading = loadStates.refresh is androidx.paging.LoadState.Loading
 
-                        val adapter = MovieAdapter(state.movie, onFavoriteClick = { movie -> viewModel.addToFavorites(movie) })
+                    binding.progressLoading.isVisible = isLoading
+                    binding.recyclerMovies.isVisible = !isLoading
+                    binding.textAppTitle.isVisible = true
 
-                        binding.recyclerMovies.adapter = adapter
-
-                    }
-                    is MovieUiState.Error -> {
-                        binding.progressLoading.isVisible = false
-                        Toast.makeText(this@MainActivity, state.message, Toast.LENGTH_LONG)
-                            .show()
+                    val errorState = loadStates.refresh as? androidx.paging.LoadState.Error
+                    errorState?.let {
+                        Toast.makeText(this@MainActivity, "Error: ${it.error.message}", Toast.LENGTH_LONG).show()
+                        Log.e("PAGING_ERROR", "Pagination failed", it.error)
                     }
                 }
             }

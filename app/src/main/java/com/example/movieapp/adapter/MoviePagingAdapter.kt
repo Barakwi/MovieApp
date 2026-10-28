@@ -33,9 +33,7 @@ class MoviePagingAdapter(
             Glide.with(holder.itemView.context)
                 .load(imageUrl)
                 .into(holder.binding.imagePoster)
-            holder.binding.imageFavorite.setOnClickListener {
-                onFavoriteClick(currentMovie)
-            }
+
         }
     }
     class MovieViewHolder(val binding: ItemMovieBinding) :
