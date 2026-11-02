@@ -46,7 +46,7 @@ class MovieViewModel(
 
 
             try {
-                val response = RetrofitClient.movieApi.getMoviesByCategory("107f82ed6dd4da4803ec744ace7ea6d2", category ?: "popular",page = 1)
+                val response = apiService.getMoviesByCategory(category ?: "popular", "107f82ed6dd4da4803ec744ace7ea6d2", 1)
                 if (response.isSuccessful && response.body() != null) {
                     _uiState.value = MovieUiState.Success(movie = response.body()!!.movies)
                 }else {

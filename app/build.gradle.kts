@@ -1,14 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("kotlin-kapt")
     alias(libs.plugins.kotlin.android)
-
+    id("kotlin-kapt")
 }
+
 android {
     namespace = "com.example.movieapp"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.movieapp"
@@ -22,58 +20,71 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         viewBinding = true
     }
+
     testOptions {
         unitTests {
             isReturnDefaultValues = true
         }
     }
+}
 
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+    }
 }
 
 dependencies {
-    implementation(libs.androidx.activity.ktx)
+    // AndroidX & Core UI
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
 
-    // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    // Gson Converter
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    // Retrofit & Gson Parser
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    // Lifecycle ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
-    // Lifecycle Runtime
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // Lifecycle & ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
 
-    implementation("androidx.activity:activity-ktx:1.9.2")
+    // Glide (Image Loading)
+    implementation("com.github.bumptech.glide:glide:5.0.9")
 
-    implementation("com.google.android.material:material:1.14.0")
+    // Room Database
+    implementation("androidx.room:room-runtime:2.8.5")
+    implementation("androidx.room:room-ktx:2.8.5")
+    kapt("androidx.room:room-compiler:2.8.5")
 
-    implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    // Paging 3
+    implementation("androidx.paging:paging-runtime-ktx:3.5.3")
 
-    implementation("androidx.paging:paging-runtime:3.5.1")
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("com.google.android.material:material:1.3.0-alpha03")
 }
