@@ -6,4 +6,6 @@
     <string name="top_rated">Top Rated</string>
     <string name="upcoming">Upcoming</string>
     <string name="recent">Recent</string>
+    <string name="new_movies">New Movies</string>
+    <string name="favorites">Favorite Movies</string>
 </resources>

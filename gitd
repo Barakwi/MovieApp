@@ -1,0 +1,29 @@
+[33mcommit 660698518e01bc5d0a3552b07e0672e849659e3b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Barakwi <mohamedbarakwi@gmail.com>
+Date:   Wed Oct 28 16:58:55 2026 +0300
+
+    Intial commit
+
+[33mcommit 1742f6a9ad541af06479fed620e2212332ec002f[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Barakwi <mohamedbarakwi@gmail.com>
+Date:   Tue Oct 27 19:37:48 2026 +0300
+
+    Add paging source and update paging adapter
+
+[33mcommit 8b9254a73c319552152f30b285ae6663d0150935[m
+Author: Barakwi <mohamedbarakwi@gmail.com>
+Date:   Tue Oct 27 19:29:53 2026 +0300
+
+    implement pagination for movie catalog
+
+[33mcommit 878c56a97253a3056acc70a44bf53777a8c27878[m
+Author: Barakwi <mohamedbarakwi@gmail.com>
+Date:   Wed Oct 21 17:33:16 2026 +0300
+
+    Added movie database and favorites feature
+
+[33mcommit f168e4cf60eaad2298953b51dd97f010682ab65f[m
+Author: Barakwi <mohamedbarakwi@gmail.com>
+Date:   Mon Oct 12 13:34:55 2026 +0300
+
+    Initial commit
